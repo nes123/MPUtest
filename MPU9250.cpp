@@ -226,22 +226,7 @@ returns the range set (2,4,8 or 16)
 
 unsigned int MPU9250::get_acc_scale()
 {
-    unsigned int temp_scale=WriteReg(MPUREG_ACCEL_CONFIG|READ_FLAG, 0x00);
-    switch (temp_scale){
-        case BITS_FS_2G:
-            temp_scale=2;
-        break;
-        case BITS_FS_4G:
-            temp_scale=4;
-        break;
-        case BITS_FS_8G:
-            temp_scale=8;
-        break;
-        case BITS_FS_16G:
-            temp_scale=16;
-        break;
-    }
-    return temp_scale;
+    return WriteReg(MPUREG_ACCEL_CONFIG|READ_FLAG, 0x00);
 }
 
 
@@ -258,22 +243,7 @@ returns the range set (250,500,1000 or 2000)
 
 unsigned int MPU9250::get_gyro_scale()
 {
-    unsigned int temp_scale=WriteReg(MPUREG_GYRO_CONFIG|READ_FLAG, 0x00);
-    switch (temp_scale){
-        case BITS_FS_250DPS:
-            temp_scale=250;
-        break;
-        case BITS_FS_500DPS:
-            temp_scale=500;
-        break;
-        case BITS_FS_1000DPS:
-            temp_scale=1000;
-        break;
-        case BITS_FS_2000DPS:
-            temp_scale=2000;
-        break;
-    }
-    return temp_scale;
+    return WriteReg(MPUREG_GYRO_CONFIG|READ_FLAG, 0x00);
 }
 
 /*-----------------------------------------------------------------------------------------------
@@ -534,10 +504,10 @@ void MPU9250::doSelfTest(float *destination) // Should return percent deviation 
 
     printf("Current A&G ranges: %d, %d\nNeeded ranges: %d, %d\n", acc_range, gyro_range, 16, 2000);
 
-    WriteReg(MPUREG_SMPLRT_DIV, 0x00); // Set gyro sample rate to 1 kHz
-    WriteReg(MPUREG_CONFIG, 0x02); // Set gyro sample rate to 1 kHz and DLPF to 92 Hz
+    //WriteReg(MPUREG_SMPLRT_DIV, 0x00); // Set gyro sample rate to 1 kHz
+    //WriteReg(MPUREG_CONFIG, 0x02); // Set gyro sample rate to 1 kHz and DLPF to 92 Hz
     WriteReg(MPUREG_GYRO_CONFIG, (uint8_t)1<<FS); // Set full scale range for the gyro to 250 dps
-    WriteReg(MPUREG_ACCEL_CONFIG+1, 0x02); // Set accelerometer rate to 1 kHz and bandwidth to 92 Hz
+    //WriteReg(MPUREG_ACCEL_CONFIG+1, 0x02); // Set accelerometer rate to 1 kHz and bandwidth to 92 Hz
     WriteReg(MPUREG_ACCEL_CONFIG, (uint8_t)1<<FS); // Set full scale range for the accelerometer to 2 g
 
     for( int ii = 0; ii < 200; ii++) { // get average current values of gyro and acclerometer
