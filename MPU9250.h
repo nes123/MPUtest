@@ -40,7 +40,8 @@ public:
     void getMotion9(float *ax, float *ay, float *az, float *gx, float *gy, float *gz, float *mx, float *my, float *mz);
     void getMotion6(float *ax, float *ay, float *az, float *gx, float *gy, float *gz);
 
-    void doSelfTest(float *destination);
+    void detailedSelfTest(float *destination);
+    bool doSelfTest();
 
 public:
     float acc_divider;

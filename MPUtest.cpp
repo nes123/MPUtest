@@ -33,13 +33,13 @@ int main()
 
 	float d[6] = {};
 
-	printf("pre-SelfTest result values:\nAX: %f, AY: %f, AZ: %f\nGX: %f, GY: %f, GZ: %f\n", d[0], d[1], d[2], d[3], d[4], d[5]);
-
-	imu.doSelfTest(d);
-
-	printf("post-SelfTest result values:\nAX: %f, AY: %f, AZ: %f\nGX: %f, GY: %f, gZ: %f\n", d[0], d[1], d[2], d[3], d[4], d[5]);
-
-	//imu.initialize();
+	if (imu.doSelfTest())
+	{
+		printf("MPU9250 self test passed\n");
+	} else {
+		printf("MPU9250 self test failed");
+		return 0;
+	}
 
     for(int i=0;i<10;i++)
 	{
@@ -51,4 +51,6 @@ int main()
 
         sleep(0.5);
     }
+
+	return 1;
 }

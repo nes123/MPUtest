@@ -489,7 +489,7 @@ void MPU9250::getMotion6(float *ax, float *ay, float *az, float *gx, float *gy, 
 }
 
 // Accelerometer and gyroscope self test; check calibration wrt factory settings
-void MPU9250::doSelfTest(float *destination) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
+void MPU9250::detailedSelfTest(float *destination) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
 {
     uint8_t rawData[6] = {0, 0, 0, 0, 0, 0};
     uint8_t selfTest[6];
@@ -497,17 +497,10 @@ void MPU9250::doSelfTest(float *destination) // Should return percent deviation 
     float factoryTrim[6];
     uint8_t FS = 0;
 
-    int gyro_range, acc_range;
+    int gyro_range = get_gyro_scale();
+    int acc_range = get_acc_scale();
 
-    gyro_range = get_gyro_scale();
-    acc_range = get_acc_scale();
-
-    printf("Current A&G ranges: %d, %d\nNeeded ranges: %d, %d\n", acc_range, gyro_range, 16, 2000);
-
-    //WriteReg(MPUREG_SMPLRT_DIV, 0x00); // Set gyro sample rate to 1 kHz
-    //WriteReg(MPUREG_CONFIG, 0x02); // Set gyro sample rate to 1 kHz and DLPF to 92 Hz
     WriteReg(MPUREG_GYRO_CONFIG, (uint8_t)1<<FS); // Set full scale range for the gyro to 250 dps
-    //WriteReg(MPUREG_ACCEL_CONFIG+1, 0x02); // Set accelerometer rate to 1 kHz and bandwidth to 92 Hz
     WriteReg(MPUREG_ACCEL_CONFIG, (uint8_t)1<<FS); // Set full scale range for the accelerometer to 2 g
 
     for( int ii = 0; ii < 200; ii++) { // get average current values of gyro and acclerometer
@@ -532,8 +525,6 @@ void MPU9250::doSelfTest(float *destination) // Should return percent deviation 
     WriteReg(MPUREG_ACCEL_CONFIG, 0xE0); // Enable self test on all three axes and set accelerometer range to +/- 2 g
     WriteReg(MPUREG_GYRO_CONFIG, 0xE0); // Enable self test on all three axes and set gyro range to +/- 250 degrees/s
 
-    printf("Middle selftest status:\nCurrent A&G ranges: %d, %d\nNeeded ranges: %d, %d\n", get_acc_scale(), get_gyro_scale(), 2, 250);
-
     usleep(25000); // Delay a while to let the device stabilize
 
     for( int ii = 0; ii < 200; ii++) { // get average self-test values of gyro and acclerometer
@@ -557,6 +548,7 @@ void MPU9250::doSelfTest(float *destination) // Should return percent deviation 
     // Configure the gyro and accelerometer for normal operation
     WriteReg(MPUREG_ACCEL_CONFIG, 0x00);
     WriteReg(MPUREG_GYRO_CONFIG, 0x00);
+
     usleep(25000); // Delay a while to let the device stabilize
 
     // Retrieve accelerometer and gyro factory Self-Test Code from USR_Reg
@@ -584,9 +576,19 @@ void MPU9250::doSelfTest(float *destination) // Should return percent deviation 
 
     set_acc_scale(acc_range);
     set_gyro_scale(gyro_range);
+}
 
-    gyro_range = get_gyro_scale();
-    acc_range = get_acc_scale();
+bool MPU9250::doSelfTest()
+{
+    float deviation[6];
+    bool flag = true;
 
-    printf("Current A&G ranges: %d, %d\nNeeded ranges: %d, %d\n", acc_range, gyro_range, 16, 2000);
+    detailedSelfTest(deviation);
+
+    for (int i=0;i<6;i++)
+    {
+        if (deviation[i] > 14) flag = false;
+    }
+
+    return flag;
 }
