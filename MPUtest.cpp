@@ -29,7 +29,7 @@ int main()
 
 	float ax, ay, az, gx, gy, gz, mx, my, mz;
 
-    //-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 
 	float d[6] = {};
 
@@ -41,16 +41,16 @@ int main()
 		return 0;
 	}
 
-    for(int i=0;i<10;i++)
+	while(1)
 	{
-        imu.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
+        	imu.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
 
-        printf("Acc: %+05.3f %+05.3f %+05.3f ", ax, ay, az);
-        printf("Gyr: %+05.3f %+05.3f %+05.3f ", gx, gy, gz);
+        	printf("Acc: %+05.3f %+05.3f %+05.3f ", ax, ay, az);
+        	printf("Gyr: %+05.3f %+05.3f %+05.3f ", gx, gy, gz);
 		printf("Mag: %+05.3f %+05.3f %+05.3f\n", mx, my, mz);
 
-        sleep(0.5);
-    }
+	        sleep(0.5);
+    	}
 
 	return 1;
 }
